@@ -11,7 +11,7 @@ import java.util.List;
 public class Scheduler {
 
     public Process schedule(List<Process> processes) {
-        return processes.stream()
+        var scheduledProcess = processes.stream()
                 .filter(process -> process.getState().equals(State.READY))
                 .filter(process -> process.getCredits() > 0)
                 .sorted(Comparator.comparing(Process::getPriority)
@@ -19,6 +19,11 @@ public class Scheduler {
                         .thenComparing(Process::getCredits))
                 .toList()
                 .get(0);
+
+        System.out.println("---------");
+        System.out.printf("Process scheduled: %s%n", scheduledProcess.getName());
+        System.out.println("---------");
+        return scheduledProcess;
     }
 
     public void insertCredits(List<Process> processes) {

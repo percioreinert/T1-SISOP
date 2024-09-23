@@ -24,7 +24,6 @@ public class Main {
                 scheduledProcess = scheduler.schedule(processes);
                 compute(scheduledProcess, hardware);
                 hardware.processIO(processes);
-                showState(scheduledProcess);
             } catch (IndexOutOfBoundsException e) {
                 scheduler.insertCredits(processes);
             } catch (FinishProgram e) {
@@ -39,6 +38,7 @@ public class Main {
             process.consumeCredit();
             process.consumeCPUTime();
             process.lowerPriority();
+            showState(process);
             hardware.timeout(process);
         } catch (RequestIO interrupt) {
             hardware.requestIO(process);
@@ -57,10 +57,10 @@ public class Main {
 
     private static void showState(Process process) {
         System.out.println("---------");
-        System.out.printf("Process executed: %s%n", process.getName());
-        System.out.printf("Process credits: %s%n", process.getCredits());
-        System.out.printf("Process total CPU time: %s%n", process.getTotalCPUTime());
-        System.out.printf("Process state: %s%n", process.getState());
+        System.out.printf("Process executing: %s%n", process.getName());
+        System.out.printf("Remaining credits: %s%n", process.getCredits());
+        System.out.printf("Total CPU time: %s%n", process.getTotalCPUTime());
+        System.out.printf("State: %s%n", process.getState());
         System.out.println("---------");
     }
 }
