@@ -1,4 +1,4 @@
-package scheduler;
+package os;
 
 import interrupt.FinishProgram;
 import interrupt.Interrupt;

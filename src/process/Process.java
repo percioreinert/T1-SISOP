@@ -1,10 +1,11 @@
 package process;
 
 import interrupt.Hardware;
+import os.OperationalSystem;
 
 public class Process {
 
-    private final Hardware hardware;
+    private final OperationalSystem operationalSystem;
     private final String name;
     private final CPUUsage cpuUsage;
     private final ProcessType type;
@@ -17,8 +18,8 @@ public class Process {
     private int burstTimeCounter = 0;
     private int totalCPUTime = 0;
 
-    public Process(Hardware hardware, String name, CPUUsage cpuUsage, Order order, Priority priority, ProcessType type) {
-        this.hardware = hardware;
+    public Process(OperationalSystem operationalSystem, String name, CPUUsage cpuUsage, Order order, Priority priority, ProcessType type) {
+        this.operationalSystem = operationalSystem;
         this.name = name;
         this.cpuUsage = cpuUsage;
         this.order = order;
@@ -56,7 +57,7 @@ public class Process {
     public void consumeCredit() {
         this.credits -= 1;
         if (this.credits == 0) {
-            this.hardware.block(this);
+            this.operationalSystem.getHardware().block(this);
         }
     }
 
@@ -77,7 +78,7 @@ public class Process {
     public void awaitIO() {
         this.IOCounter -= 1;
         if (IOCounter == 0) {
-            this.hardware.responseIO(this);
+            this.operationalSystem.getHardware().responseIO(this);
             this.IOCounter = this.cpuUsage.IOTime();
         }
     }
@@ -93,7 +94,7 @@ public class Process {
         this.cpuTimeCounter += 1;
         this.totalCPUTime += 1;
         if (this.cpuTimeCounter == cpuUsage.totalCPUTime()) {
-            this.hardware.unschedule(this, this.type);
+            this.operationalSystem.getHardware().unschedule(this, this.type);
         }
     }
 
@@ -102,10 +103,10 @@ public class Process {
         this.cpuTimeCounter += 1;
         this.totalCPUTime += 1;
         if (cpuTimeCounter == cpuUsage.totalCPUTime()) {
-            this.hardware.unschedule(this, ProcessType.CPU);
+            this.operationalSystem.getHardware().unschedule(this, ProcessType.CPU);
         } else if (this.burstTimeCounter == cpuUsage.burst()) {
             this.burstTimeCounter = 0;
-            this.hardware.unschedule(this, this.type);
+            this.operationalSystem.getHardware().unschedule(this, this.type);
         }
     }
 
