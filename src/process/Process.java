@@ -15,6 +15,7 @@ public class Process {
     private int IOCounter;
     private int cpuTimeCounter = 0;
     private int burstTimeCounter = 0;
+    private int totalCPUTime = 0;
 
     public Process(Hardware hardware, String name, CPUUsage cpuUsage, Order order, Priority priority, ProcessType type) {
         this.hardware = hardware;
@@ -90,6 +91,7 @@ public class Process {
 
     public void consumeTotalCPUTime() {
         this.cpuTimeCounter += 1;
+        this.totalCPUTime += 1;
         if (this.cpuTimeCounter == cpuUsage.totalCPUTime()) {
             this.hardware.unschedule(this, this.type);
         }
@@ -98,6 +100,7 @@ public class Process {
     public void consumeBurstTime() {
         this.burstTimeCounter += 1;
         this.cpuTimeCounter += 1;
+        this.totalCPUTime += 1;
         if (cpuTimeCounter == cpuUsage.totalCPUTime()) {
             this.hardware.unschedule(this, ProcessType.CPU);
         } else if (this.burstTimeCounter == cpuUsage.burst()) {
@@ -113,5 +116,9 @@ public class Process {
             case MEDIUM -> Priority.LOW;
             case LOW, LOWEST -> Priority.LOWEST;
         };
+    }
+
+    public int getTotalCPUTime() {
+        return this.totalCPUTime;
     }
 }

@@ -17,18 +17,32 @@ public class Hardware {
 
     public void requestIO(Process process) {
         scheduler.changeStatus(process, Interrupt.IO_STARTED);
+        System.out.println("---------");
+        System.out.printf("Process interrupted by IO call: %s%n", process.getName());
+        System.out.println("---------");
     }
 
     public void timeout(Process process) {
-        scheduler.changeStatus(process, Interrupt.TIMEOUT);
+        if (process.getCredits() != 0) {
+            scheduler.changeStatus(process, Interrupt.TIMEOUT);
+            System.out.println("---------");
+            System.out.printf("Process interrupted by timeout: %s%n", process.getName());
+            System.out.println("---------");
+        }
     }
 
     public void responseIO(Process process) {
         scheduler.changeStatus(process, Interrupt.IO_FINISHED);
+        System.out.println("---------");
+        System.out.printf("Process ready after IO: %s%n", process.getName());
+        System.out.println("---------");
     }
 
     public void terminate(Process process) {
         scheduler.changeStatus(process, Interrupt.PROCESS_FINISHED);
+        System.out.println("---------");
+        System.out.printf("Process finished: %s%n", process.getName());
+        System.out.println("---------");
     }
 
     public void block(Process process) {

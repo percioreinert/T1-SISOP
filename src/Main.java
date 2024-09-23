@@ -1,8 +1,8 @@
 import interrupt.FinishProgram;
 import interrupt.Hardware;
 import interrupt.RequestIO;
-import process.*;
 import process.Process;
+import process.*;
 import scheduler.Scheduler;
 
 import java.util.ArrayList;
@@ -56,8 +56,11 @@ public class Main {
     }
 
     private static void showState(Process process) {
+        System.out.println("---------");
         System.out.printf("Process executed: %s%n", process.getName());
         System.out.printf("Process credits: %s%n", process.getCredits());
+        System.out.printf("Process total CPU time: %s%n", process.getTotalCPUTime());
         System.out.printf("Process state: %s%n", process.getState());
+        System.out.println("---------");
     }
 }

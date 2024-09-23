@@ -15,14 +15,20 @@ public class Scheduler {
                 .filter(process -> process.getState().equals(State.READY))
                 .filter(process -> process.getCredits() > 0)
                 .sorted(Comparator.comparing(Process::getPriority)
-                        .thenComparing(Process::getOrder))
+                        .thenComparing(Process::getOrder)
+                        .thenComparing(Process::getCredits))
                 .toList()
                 .get(0);
     }
 
     public void insertCredits(List<Process> processes) {
         processes
-                .forEach(process -> process.setCredits((process.getCredits() / 2) + process.creditsByPriority()));
+                .stream()
+                .filter(process -> !process.getState().equals(State.EXIT))
+                .forEach(process -> {
+                    process.setCredits((process.getCredits() / 2) + process.creditsByPriority());
+                    process.setState(State.READY);
+                });
     }
 
     public void changeStatus(Process process, Interrupt interrupt) {
@@ -40,6 +46,14 @@ public class Scheduler {
 
         if (list.isEmpty()) {
             throw new FinishProgram("Finish Program");
+        }
+
+        var nonBlockedList = processes.stream()
+                .filter(process -> !process.getState().equals(State.BLOCKED) || !process.getState().equals(State.EXIT))
+                .toList();
+
+        if (nonBlockedList.isEmpty()) {
+            insertCredits(processes);
         }
     }
 }
