@@ -6,14 +6,15 @@ public class Process {
 
     private final Hardware hardware;
     private final String name;
-    private final Priority priority;
     private final CPUUsage cpuUsage;
     private final ProcessType type;
-    private Order order;
+    private final Order order;
+    private Priority priority;
     private State state;
     private int credits;
     private int IOCounter;
     private int cpuTimeCounter = 0;
+    private int burstTimeCounter = 0;
 
     public Process(Hardware hardware, String name, CPUUsage cpuUsage, Order order, Priority priority, ProcessType type) {
         this.hardware = hardware;
@@ -41,10 +42,6 @@ public class Process {
 
     public State getState() {
         return state;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
     }
 
     public void setState(State state) {
@@ -99,9 +96,22 @@ public class Process {
     }
 
     public void consumeBurstTime() {
+        this.burstTimeCounter += 1;
         this.cpuTimeCounter += 1;
-        if (this.cpuTimeCounter == cpuUsage.burst()) {
+        if (cpuTimeCounter == cpuUsage.totalCPUTime()) {
+            this.hardware.unschedule(this, ProcessType.CPU);
+        } else if (this.burstTimeCounter == cpuUsage.burst()) {
+            this.burstTimeCounter = 0;
             this.hardware.unschedule(this, this.type);
         }
+    }
+
+    public void lowerPriority() {
+        this.priority = switch (priority) {
+            case HIGHEST -> Priority.HIGH;
+            case HIGH -> Priority.MEDIUM;
+            case MEDIUM -> Priority.LOW;
+            case LOW, LOWEST -> Priority.LOWEST;
+        };
     }
 }

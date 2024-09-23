@@ -2,9 +2,9 @@ package process;
 
 public enum Order {
 
-    LOWEST,
-    LOW,
-    MEDIUM,
+    HIGHEST,
     HIGH,
-    HIGHEST
+    MEDIUM,
+    LOW,
+    LOWEST
 }
